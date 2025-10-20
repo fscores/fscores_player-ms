@@ -1,4 +1,4 @@
-package com.evolting.playerms.dtos;
+package com.evolting.playerms.dtos.response;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -15,7 +15,7 @@ import java.time.LocalDate;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class PlayerDto implements Serializable {
+public class PlayerResponseDto implements Serializable {
     private Integer id; // ID is often null on creation (POST), so no validation needed.
 
     @NotBlank(message = "First name is a mandatory field.")

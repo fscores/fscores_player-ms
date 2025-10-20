@@ -1,6 +1,6 @@
 package com.evolting.playerms.utils;
 
-import com.evolting.playerms.dtos.PlayerDto;
+import com.evolting.playerms.dtos.request.PlayerRequestDto;
 import com.evolting.playerms.entities.Player;
 
 public class PlayerMapper {
@@ -11,12 +11,12 @@ public class PlayerMapper {
      * @param player The strongly-typed JPA entity.
      * @return The DTO object for API transport.
      */
-    public static PlayerDto toDto(Player player) {
+    public static PlayerRequestDto toDto(Player player) {
         if (player == null) {
             return null;
         }
 
-        PlayerDto dto = new PlayerDto();
+        PlayerRequestDto dto = new PlayerRequestDto();
         dto.setId(player.getId());
         dto.setFirstName(player.getFirstName());
         dto.setLastName(player.getLastName());
@@ -40,7 +40,7 @@ public class PlayerMapper {
      * @param dto The DTO object received from the API.
      * @return The Entity object ready for database persistence.
      */
-    public static Player toEntity(PlayerDto dto) {
+    public static Player toEntity(PlayerRequestDto dto) {
         if (dto == null) {
             return null;
         }

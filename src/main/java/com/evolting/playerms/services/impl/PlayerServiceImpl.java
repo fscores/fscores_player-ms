@@ -1,6 +1,6 @@
 package com.evolting.playerms.services.impl;
 
-import com.evolting.playerms.dtos.PlayerDto;
+import com.evolting.playerms.dtos.request.PlayerRequestDto;
 import com.evolting.playerms.helpers.PlayerSearchDto;
 import com.evolting.playerms.entities.Player;
 import com.evolting.playerms.helpers.PlayerSpecifications;
@@ -29,37 +29,37 @@ public class PlayerServiceImpl implements PlayerService {
 
     @Cacheable(value = "players", key = "'list-' + #pageNo + '-' + #pageSize + '-' + #sortBy")
     @Override
-    public List<PlayerDto> getAllPlayers(Integer pageNo, Integer pageSize, String sortBy) {
-        List<PlayerDto> playerDtos = new ArrayList<>();
+    public List<PlayerRequestDto> getAllPlayers(Integer pageNo, Integer pageSize, String sortBy) {
+        List<PlayerRequestDto> playerRequestDtos = new ArrayList<>();
         try {
             Pageable paging = PageRequest.of(pageNo, pageSize, Sort.by(sortBy));
-            playerDtos = playerRepository.findAll(paging)
+            playerRequestDtos = playerRepository.findAll(paging)
                     .stream()
                     .map(PlayerMapper::toDto)
                     .toList();
         } catch (Exception e) {
             log.error("Error retrieving all players", e);
         }
-        return playerDtos;
+        return playerRequestDtos;
     }
 
     @Cacheable(value = "players", key = "#id")
     @Override
-    public PlayerDto getPlayerById(Integer id) {
-        PlayerDto playerDto = new PlayerDto();
+    public PlayerRequestDto getPlayerById(Integer id) {
+        PlayerRequestDto playerRequestDto = new PlayerRequestDto();
         try {
             Player player = playerRepository.findById(id)
                     .orElseThrow(() -> new EntityNotFoundException("Player not found with ID: " + id));
-            playerDto = PlayerMapper.toDto(player);
+            playerRequestDto = PlayerMapper.toDto(player);
         } catch (Exception e) {
             log.error("Error retrieving player with ID {}", id, e);
         }
-        return playerDto;
+        return playerRequestDto;
     }
 
     @Override
-    public List<PlayerDto> searchPlayer(PlayerSearchDto playerSearchDto, Integer pageNo, Integer pageSize, String sortBy) {
-        List<PlayerDto> playerDtos = new ArrayList<>();
+    public List<PlayerRequestDto> searchPlayer(PlayerSearchDto playerSearchDto, Integer pageNo, Integer pageSize, String sortBy) {
+        List<PlayerRequestDto> playerRequestDtos = new ArrayList<>();
         try {
             Specification<Player> spec = PlayerSpecifications.buildFromDto(playerSearchDto);
             Pageable paging = PageRequest.of(pageNo, pageSize, Sort.by(sortBy));
@@ -71,14 +71,14 @@ public class PlayerServiceImpl implements PlayerService {
         } catch (Exception e) {
             log.error("Error retrieving all players", e);
         }
-        return playerDtos;
+        return playerRequestDtos;
     }
 
     @CacheEvict(value = "players", allEntries = true)
     @Override
-    public PlayerDto createPlayer(PlayerDto playerDto) {
+    public PlayerRequestDto createPlayer(PlayerRequestDto playerRequestDto) {
         try {
-            Player player = playerRepository.save(PlayerMapper.toEntity(playerDto));
+            Player player = playerRepository.save(PlayerMapper.toEntity(playerRequestDto));
             return PlayerMapper.toDto(player);
         } catch (Exception e) {
             log.error("Error creating player", e);
@@ -89,9 +89,9 @@ public class PlayerServiceImpl implements PlayerService {
 
     @CacheEvict(value = "players", allEntries = true)
     @Override
-    public PlayerDto updatePlayer(Integer id, PlayerDto playerDto) {
+    public PlayerRequestDto updatePlayer(Integer id, PlayerRequestDto playerRequestDto) {
         try {
-            Player player = PlayerMapper.toEntity(playerDto);
+            Player player = PlayerMapper.toEntity(playerRequestDto);
             player.setId(id);
             player = playerRepository.save(player);
             return PlayerMapper.toDto(player);
