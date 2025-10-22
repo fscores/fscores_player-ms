@@ -1,12 +1,13 @@
 package com.evolting.playerms.services.impl;
 
 import com.evolting.playerms.dtos.request.PlayerRequestDto;
-import com.evolting.playerms.helpers.PlayerSearchDto;
+import com.evolting.playerms.dtos.response.PlayerResponseDto;
+import com.evolting.playerms.dtos.request.PlayerSearchDto;
 import com.evolting.playerms.entities.Player;
 import com.evolting.playerms.helpers.PlayerSpecifications;
 import com.evolting.playerms.repositories.PlayerRepository;
 import com.evolting.playerms.services.PlayerService;
-import com.evolting.playerms.utils.PlayerMapper;
+import com.evolting.playerms.utils.mappers.PlayerMapper;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -29,57 +30,57 @@ public class PlayerServiceImpl implements PlayerService {
 
     @Cacheable(value = "players", key = "'list-' + #pageNo + '-' + #pageSize + '-' + #sortBy")
     @Override
-    public List<PlayerRequestDto> getAllPlayers(Integer pageNo, Integer pageSize, String sortBy) {
-        List<PlayerRequestDto> playerRequestDtos = new ArrayList<>();
+    public List<PlayerResponseDto> getAllPlayers(Integer pageNo, Integer pageSize, String sortBy) {
+        List<PlayerResponseDto> playerResponseDtos = new ArrayList<>();
         try {
             Pageable paging = PageRequest.of(pageNo, pageSize, Sort.by(sortBy));
-            playerRequestDtos = playerRepository.findAll(paging)
+            playerResponseDtos = playerRepository.findAll(paging)
                     .stream()
-                    .map(PlayerMapper::toDto)
+                    .map(PlayerMapper::toResponse)
                     .toList();
         } catch (Exception e) {
             log.error("Error retrieving all players", e);
         }
-        return playerRequestDtos;
+        return playerResponseDtos;
     }
 
     @Cacheable(value = "players", key = "#id")
     @Override
-    public PlayerRequestDto getPlayerById(Integer id) {
-        PlayerRequestDto playerRequestDto = new PlayerRequestDto();
+    public PlayerResponseDto getPlayerById(Integer id) {
+        PlayerResponseDto playerResponseDto = null;
         try {
             Player player = playerRepository.findById(id)
                     .orElseThrow(() -> new EntityNotFoundException("Player not found with ID: " + id));
-            playerRequestDto = PlayerMapper.toDto(player);
+            playerResponseDto = PlayerMapper.toResponse(player);
         } catch (Exception e) {
             log.error("Error retrieving player with ID {}", id, e);
         }
-        return playerRequestDto;
+        return playerResponseDto;
     }
 
     @Override
-    public List<PlayerRequestDto> searchPlayer(PlayerSearchDto playerSearchDto, Integer pageNo, Integer pageSize, String sortBy) {
-        List<PlayerRequestDto> playerRequestDtos = new ArrayList<>();
+    public List<PlayerResponseDto> searchPlayer(PlayerSearchDto playerSearchDto, Integer pageNo, Integer pageSize, String sortBy) {
+        List<PlayerResponseDto> playerResponseDtos = new ArrayList<>();
         try {
             Specification<Player> spec = PlayerSpecifications.buildFromDto(playerSearchDto);
             Pageable paging = PageRequest.of(pageNo, pageSize, Sort.by(sortBy));
 
             return playerRepository.findAll(spec, paging)
                     .stream()
-                    .map(PlayerMapper::toDto)
+                    .map(PlayerMapper::toResponse)
                     .toList();
         } catch (Exception e) {
             log.error("Error retrieving all players", e);
         }
-        return playerRequestDtos;
+        return playerResponseDtos;
     }
 
     @CacheEvict(value = "players", allEntries = true)
     @Override
-    public PlayerRequestDto createPlayer(PlayerRequestDto playerRequestDto) {
+    public PlayerResponseDto createPlayer(PlayerRequestDto playerRequestDto) {
         try {
             Player player = playerRepository.save(PlayerMapper.toEntity(playerRequestDto));
-            return PlayerMapper.toDto(player);
+            return PlayerMapper.toResponse(player);
         } catch (Exception e) {
             log.error("Error creating player", e);
         }
@@ -89,12 +90,12 @@ public class PlayerServiceImpl implements PlayerService {
 
     @CacheEvict(value = "players", allEntries = true)
     @Override
-    public PlayerRequestDto updatePlayer(Integer id, PlayerRequestDto playerRequestDto) {
+    public PlayerResponseDto updatePlayer(Integer id, PlayerRequestDto playerRequestDto) {
         try {
             Player player = PlayerMapper.toEntity(playerRequestDto);
             player.setId(id);
             player = playerRepository.save(player);
-            return PlayerMapper.toDto(player);
+            return PlayerMapper.toResponse(player);
         } catch (Exception e) {
             log.error("Error updating player", e);
         }

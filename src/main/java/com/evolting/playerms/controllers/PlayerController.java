@@ -1,7 +1,8 @@
 package com.evolting.playerms.controllers;
 
 import com.evolting.playerms.dtos.request.PlayerRequestDto;
-import com.evolting.playerms.helpers.PlayerSearchDto;
+import com.evolting.playerms.dtos.response.PlayerResponseDto;
+import com.evolting.playerms.dtos.request.PlayerSearchDto;
 import com.evolting.playerms.services.PlayerService;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
@@ -26,7 +27,7 @@ public class PlayerController {
 
     @GetMapping("/{id}")
     public ResponseEntity<?> getPlayerById(@PathVariable Integer id) {
-        PlayerRequestDto ret = playerService.getPlayerById(id);
+        PlayerResponseDto ret = playerService.getPlayerById(id);
         if (ret == null) {
             return new ResponseEntity<>("Player not found.", HttpStatus.NOT_FOUND);
         }
@@ -38,7 +39,7 @@ public class PlayerController {
                                               @RequestParam(defaultValue = "0") Integer pageNo,
                                               @RequestParam(defaultValue = "10") Integer pageSize,
                                               @RequestParam(defaultValue = "id") String sortBy) {
-        List<PlayerRequestDto> ret = playerService.searchPlayer(playerSearchDto, pageNo, pageSize, sortBy);
+        List<PlayerResponseDto> ret = playerService.searchPlayer(playerSearchDto, pageNo, pageSize, sortBy);
         if (ret == null) {
             return new ResponseEntity<>("Player not found.", HttpStatus.NOT_FOUND);
         }
@@ -47,7 +48,7 @@ public class PlayerController {
 
     @PostMapping
     public ResponseEntity<?> createPlayer(@Valid @RequestBody PlayerRequestDto playerRequestDto) {
-        PlayerRequestDto ret = playerService.createPlayer(playerRequestDto);
+        PlayerResponseDto ret = playerService.createPlayer(playerRequestDto);
         if (ret == null) {
             return new ResponseEntity<>("Fail to register player data.", HttpStatus.BAD_REQUEST);
         }
@@ -56,7 +57,7 @@ public class PlayerController {
 
     @PutMapping
     public ResponseEntity<?> updatePlayer(@Valid @RequestBody PlayerRequestDto playerRequestDto) {
-        PlayerRequestDto ret = playerService.updatePlayer(playerRequestDto.getId(), playerRequestDto);
+        PlayerResponseDto ret = playerService.updatePlayer(playerRequestDto.getId(), playerRequestDto);
         if (ret == null) {
             return new ResponseEntity<>("Fail to update player data.", HttpStatus.BAD_REQUEST);
         }

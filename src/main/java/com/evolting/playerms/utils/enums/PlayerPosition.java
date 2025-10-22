@@ -1,4 +1,4 @@
-package com.evolting.playerms.utils;
+package com.evolting.playerms.utils.enums;
 
 public enum PlayerPosition {
     GK("Goalkeeper"),
@@ -24,20 +24,11 @@ public enum PlayerPosition {
         this.position = position;
     }
 
-    /**
-     * Returns the full, descriptive name of the player position.
-     * Example: PlayerPosition.CDM.getPosition() -> "Central Defensive Midfielder"
-     */
-    public String getPosition() {
+    public String getFullName() {
         return position;
     }
 
-    /**
-     * Helper method to look up an Enum constant by its full name (case-insensitive).
-     * @param name The full name of the position.
-     * @return The matching PlayerPosition enum constant, or null if not found.
-     */
-    public static PlayerPosition fromPosition(String name) {
+    public static PlayerPosition fromFullName(String name) {
         for (PlayerPosition position : PlayerPosition.values()) {
             if (position.position.equalsIgnoreCase(name)) {
                 return position;

@@ -14,6 +14,4 @@ import java.util.List;
 
 @Repository
 public interface PlayerRepository extends JpaRepository<Player, Integer>, JpaSpecificationExecutor<Player> {
-    @Query("SELECT p FROM Player p WHERE concat(p.firstName, ' ', p.lastName) LIKE %:name%")
-    Page<Player> findPlayerByName(@Param("name") String name, Pageable pageable);
 }

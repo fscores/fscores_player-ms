@@ -1,6 +1,9 @@
 package com.evolting.playerms.helpers;
 
+import com.evolting.playerms.dtos.request.PlayerSearchDto;
 import com.evolting.playerms.entities.Player;
+import com.evolting.playerms.utils.enums.Nationality;
+import com.evolting.playerms.utils.enums.PlayerPosition;
 import jakarta.persistence.criteria.Expression;
 import org.springframework.data.jpa.domain.Specification;
 import jakarta.persistence.criteria.Predicate;
@@ -8,6 +11,7 @@ import jakarta.persistence.criteria.Predicate;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class PlayerSpecifications {
 
@@ -35,11 +39,11 @@ public class PlayerSpecifications {
             }
 
             if (dto.getPositions() != null && !dto.getPositions().isEmpty()) {
-                predicates.add(root.get("position").in(dto.getPositions()));
+                predicates.add(root.get("position").in(dto.getPositions().stream().map(p -> PlayerPosition.fromFullName(p).toString()).collect(Collectors.toSet())));
             }
 
             if (dto.getNationality() != null && !dto.getNationality().isEmpty()) {
-                predicates.add(root.get("nationality").in(dto.getNationality()));
+                predicates.add(root.get("nationality").in(dto.getNationality().stream().map(n -> Nationality.fromFullName(n).toString()).collect(Collectors.toSet())));
             }
 
             // Combine all predicates with AND

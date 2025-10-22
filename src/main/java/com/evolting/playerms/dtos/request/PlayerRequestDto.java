@@ -15,8 +15,8 @@ import java.time.LocalDate;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class PlayerRequestDto implements Serializable {
-    private Integer id; // ID is often null on creation (POST), so no validation needed.
+public class PlayerRequestDto {
+    private Integer id;
 
     @NotBlank(message = "First name is a mandatory field.")
     @Pattern(regexp = "^[a-zA-Z]+$", message = "Last name can only contain letters.")
